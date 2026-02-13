@@ -22,6 +22,7 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
         message: "",
     });
     const [submitted, setSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Partial<Record<keyof RSVPData, string>>>({});
 
     useEffect(() => {
@@ -35,7 +36,7 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
         const newErrors: Partial<Record<keyof RSVPData, string>> = {};
         if (!formData.name.trim()) newErrors.name = "សូមបញ្ចូលឈ្មោះរបស់អ្នក";
         if (!formData.attending) newErrors.attending = "សូមបញ្ជាក់ថាតើអ្នកអាចចូលរួមបានដែរឬទេ";
-        if (formData.guests < 1 || formData.guests > 10) newErrors.guests = "សូមបញ្ចូលចំនួនត្រឹមត្រូវ (១-១០)";
+        if (formData.attending !== "no" && (formData.guests < 1 || formData.guests > 10)) newErrors.guests = "សូមបញ្ចូលចំនួនត្រឹមត្រូវ (១-១០)";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -43,6 +44,8 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!validate()) return;
+
+        setIsSubmitting(true);
 
         // Store in localStorage as demo
         const existing = JSON.parse(localStorage.getItem("rsvp_responses") || "[]");
@@ -65,6 +68,11 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
         window.dispatchEvent(new Event("storage"));
 
         onSubmit?.(formData);
+
+        // Small delay to show the loading state briefly if the API is too fast
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        setIsSubmitting(false);
         setSubmitted(true);
     };
 
@@ -125,7 +133,7 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
                                     type="text"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="សូមបញ្ចូលឈ្មោះពេញរបស់អ្នក"
+                                    placeholder="សូមបញ្ចូលឈ្មោះរបស់អ្នក"
                                     className="w-full px-4 py-3 bg-white border border-rose-light/30 rounded-xl font-[family-name:var(--font-siemreap)] text-sm text-charcoal placeholder-charcoal-light/50 focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all duration-300"
                                 />
                                 {errors.name && (
@@ -163,22 +171,29 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
                             </div>
 
                             {/* Number of guests */}
-                            <div>
-                                <label className="block font-[family-name:var(--font-siemreap)] text-sm text-charcoal mb-2 font-medium">
-                                    ចំនួនភ្ញៀវ
-                                </label>
-                                <select
-                                    value={formData.guests}
-                                    onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) })}
-                                    className="w-full px-4 py-3 bg-white border border-rose-light/30 rounded-xl font-[family-name:var(--font-siemreap)] text-sm text-charcoal focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all duration-300 appearance-none cursor-pointer"
-                                >
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                                        <option key={n} value={n}>
-                                            {n} នាក់
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            {formData.attending !== "no" && (
+                                <div>
+                                    <label className="block font-[family-name:var(--font-siemreap)] text-sm text-charcoal mb-2 font-medium">
+                                        ចំនួនភ្ញៀវ
+                                    </label>
+                                    <select
+                                        value={formData.guests}
+                                        onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) })}
+                                        className="w-full px-4 py-3 bg-white border border-rose-light/30 rounded-xl font-[family-name:var(--font-siemreap)] text-sm text-charcoal focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all duration-300 appearance-none cursor-pointer"
+                                    >
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                                            <option key={n} value={n}>
+                                                {n} នាក់
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.guests && (
+                                        <p className="text-rose-deep text-xs mt-1 font-[family-name:var(--font-siemreap)]">
+                                            {errors.guests}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
 
                             {/* Message */}
                             <div>
@@ -197,11 +212,23 @@ export default function RSVPForm({ onSubmit }: RSVPFormProps) {
                             {/* Submit */}
                             <motion.button
                                 type="submit"
-                                className="w-full py-4 bg-gradient-to-r from-gold to-gold-light text-white font-[family-name:var(--font-siemreap)] font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 tracking-wider text-sm uppercase"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                                disabled={isSubmitting}
+                                className="w-full py-4 bg-gradient-to-r from-gold to-gold-light text-white font-[family-name:var(--font-siemreap)] font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 tracking-wider text-sm uppercase flex justify-center items-center gap-2 disabled:opacity-80 disabled:cursor-not-allowed"
+                                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                             >
-                                ផ្ញើការឆ្លើយតប
+                                {isSubmitting ? (
+                                    <>
+                                        <motion.div
+                                            animate={{ rotate: 360 }}
+                                            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                            className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                                        />
+                                        <span>កំពុងរក្សាទុក...</span>
+                                    </>
+                                ) : (
+                                    "ផ្ញើការឆ្លើយតប"
+                                )}
                             </motion.button>
                         </motion.form>
                     ) : (

@@ -1,54 +1,30 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const guestsFilePath = path.join(process.cwd(), 'data', 'guests.json');
-
-// Interface for Guest Data
-interface Guest {
-    name: string;
-    guests: number;
-    attending: string;
-    message: string;
-    timestamp: string;
-}
-
-// Helper to read data
-function readGuests(): Guest[] {
-    try {
-        if (!fs.existsSync(guestsFilePath)) {
-            // Create if it doesn't exist
-            fs.mkdirSync(path.dirname(guestsFilePath), { recursive: true });
-            fs.writeFileSync(guestsFilePath, JSON.stringify([], null, 2));
-            return [];
-        }
-        const fileContent = fs.readFileSync(guestsFilePath, 'utf-8');
-        return JSON.parse(fileContent);
-    } catch (error) {
-        console.error('Error reading guests:', error);
-        return [];
-    }
-}
-
-// Helper to write data
-function writeGuests(guests: Guest[]) {
-    try {
-        fs.writeFileSync(guestsFilePath, JSON.stringify(guests, null, 2));
-        return true;
-    } catch (error) {
-        console.error('Error writing guests:', error);
-        return false;
-    }
-}
+import { getDoc } from '@/lib/googleSheets';
 
 export async function GET() {
-    const guests = readGuests();
-    // Return count and the list (for the admin view)
-    return NextResponse.json({
-        count: guests.length,
-        guests: guests
-    });
+    try {
+        const doc = await getDoc();
+        const sheet = doc.sheetsByIndex[0]; // Access the first sheet
+        const rows = await sheet.getRows();
+
+        const guests = rows.map(row => ({
+            name: row.get('name'),
+            guests: parseInt(row.get('guests'), 10),
+            attending: row.get('attending'),
+            message: row.get('message'),
+            timestamp: row.get('timestamp'),
+        }));
+
+        return NextResponse.json({
+            count: guests.length, // Or calculate total guests if needed: guests.reduce((sum, g) => sum + g.guests, 0)
+            guests: guests
+        });
+    } catch (error) {
+        console.error('Error reading from Google Sheets:', error);
+        return NextResponse.json({ count: 0, guests: [], error: 'Failed to fetch data' });
+    }
 }
+
 
 export async function POST(request: Request) {
     try {
@@ -59,7 +35,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Name is required' }, { status: 400 });
         }
 
-        const newGuest: Guest = {
+        const newGuest = {
             name: body.name,
             guests: body.guests || 1,
             attending: body.attending || 'yes',
@@ -67,16 +43,27 @@ export async function POST(request: Request) {
             timestamp: new Date().toISOString()
         };
 
-        const guests = readGuests();
-        guests.push(newGuest);
+        const doc = await getDoc();
+        const sheet = doc.sheetsByIndex[0];
 
-        if (writeGuests(guests)) {
-            return NextResponse.json({ success: true, count: guests.length });
-        } else {
-            return NextResponse.json({ error: 'Failed to save guest' }, { status: 500 });
+        // Check if headers exist, if not set them
+        let headersLoaded = false;
+        try {
+            await sheet.loadHeaderRow();
+            headersLoaded = true;
+        } catch (e) {
+            // If loading headers fails (e.g. empty sheet), we'll set them below
         }
+
+        if (!headersLoaded || sheet.headerValues.length === 0) {
+            await sheet.setHeaderRow(['name', 'guests', 'attending', 'message', 'timestamp']);
+        }
+
+        await sheet.addRow(newGuest);
+
+        return NextResponse.json({ success: true });
     } catch (error) {
-        console.error("Error processing POST:", error);
-        return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        console.error("Error adding to Google Sheets:", error);
+        return NextResponse.json({ error: 'Failed to save guest' }, { status: 500 });
     }
 }
