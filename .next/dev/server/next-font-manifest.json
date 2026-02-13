@@ -1,0 +1,16 @@
+{
+  "app": {
+    "[project]/Documents/theanun_liza/app/page": [
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2",
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/870424b97327af6c-s.p.a3d5d7db.woff2",
+      "static/media/57321c54a720baf0-s.p.9d2abcfa.woff2",
+      "static/media/c6a1de3b9a84eba0-s.p.9f9ef946.woff2",
+      "static/media/79437cab7b0affe0-s.p.33a45e6c.woff2",
+      "static/media/7ca6d7928ed40177-s.p.8813aeb8.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pages": {},
+  "pagesUsingSizeAdjust": false
+}

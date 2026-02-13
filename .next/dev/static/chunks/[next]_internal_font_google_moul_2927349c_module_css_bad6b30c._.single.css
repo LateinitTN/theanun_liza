@@ -1,0 +1,39 @@
+/* [next]/internal/font/google/moul_2927349c.module.css [app-client] (css) */
+@font-face {
+  font-family: Moul;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../media/870424b97327af6c-s.p.a3d5d7db.woff2") format("woff2");
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+}
+
+@font-face {
+  font-family: Moul;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../media/90bd366a334655c8-s.beadcf96.woff2") format("woff2");
+  unicode-range: U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Moul Fallback;
+  src: local(Arial);
+  ascent-override: 94.45%;
+  descent-override: 45.34%;
+  line-gap-override: 0.0%;
+  size-adjust: 129.24%;
+}
+
+.moul_2927349c-module__8OVgCa__className {
+  font-family: Moul, Moul Fallback;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.moul_2927349c-module__8OVgCa__variable {
+  --font-moul: "Moul", "Moul Fallback";
+}
+
+/*# sourceMappingURL=%5Bnext%5D_internal_font_google_moul_2927349c_module_css_bad6b30c._.single.css.map*/

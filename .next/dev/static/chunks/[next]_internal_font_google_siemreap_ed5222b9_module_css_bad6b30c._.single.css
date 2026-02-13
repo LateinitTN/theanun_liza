@@ -1,0 +1,30 @@
+/* [next]/internal/font/google/siemreap_ed5222b9.module.css [app-client] (css) */
+@font-face {
+  font-family: Siemreap;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../media/57321c54a720baf0-s.p.9d2abcfa.woff2") format("woff2");
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC, U+??, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Siemreap Fallback;
+  src: local(Arial);
+  ascent-override: 82.01%;
+  descent-override: 39.36%;
+  line-gap-override: 2.2%;
+  size-adjust: 148.85%;
+}
+
+.siemreap_ed5222b9-module__MuKU_G__className {
+  font-family: Siemreap, Siemreap Fallback;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.siemreap_ed5222b9-module__MuKU_G__variable {
+  --font-siemreap: "Siemreap", "Siemreap Fallback";
+}
+
+/*# sourceMappingURL=%5Bnext%5D_internal_font_google_siemreap_ed5222b9_module_css_bad6b30c._.single.css.map*/
