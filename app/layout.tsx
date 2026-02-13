@@ -40,12 +40,12 @@ const chenla = Chenla({
 });
 
 export const metadata: Metadata = {
-  title: "Theanun & Liza — Wedding Invitation",
+  title: "Theanun & Liza លិខិតអញ្ជើញ",
   description:
     "You are cordially invited to celebrate the union of Theanun & Liza. April 13, 2026.",
   keywords: ["wedding", "invitation", "Theanun", "Liza", "celebration"],
   openGraph: {
-    title: "Theanun & Liza — Wedding Invitation",
+    title: "Theanun & Liza លិខិតអញ្ជើញ",
     description: "Join us for our special day — April 13, 2026",
     type: "website",
   },

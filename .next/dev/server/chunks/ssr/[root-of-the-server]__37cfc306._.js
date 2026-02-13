@@ -195,7 +195,7 @@ var __TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$c
 ;
 ;
 const metadata = {
-    title: "Theanun & Liza — Wedding Invitation",
+    title: "Theanun & Liza លិខិតអញ្ជើញ",
     description: "You are cordially invited to celebrate the union of Theanun & Liza. April 13, 2026.",
     keywords: [
         "wedding",
@@ -205,7 +205,7 @@ const metadata = {
         "celebration"
     ],
     openGraph: {
-        title: "Theanun & Liza — Wedding Invitation",
+        title: "Theanun & Liza លិខិតអញ្ជើញ",
         description: "Join us for our special day — April 13, 2026",
         type: "website"
     }
